@@ -1,0 +1,108 @@
+--Task-1
+Create database Shopping;
+
+use shopping;
+create or replace table shopping_history(
+product varchar(50) not null,
+quantity int not null,
+unit_price int not null);
+insert into shopping_history (product,quantity, unit_price)
+values ('bread',7,3),('egg',5,2),('milk',3,10);
+select * from Shopping_history;
+
+select product,Sum(quantity*unit_price) as Total
+from shopping_history
+group by product;
+
+
+--Task-2
+
+--Create or replace database telecom;
+
+use telecom;
+create or replace table Phones(
+name varchar(20)not null unique,
+phone_number int not null unique
+);
+insert into phones (name,phone_number)
+values ('jack',1234),('lena',3333),('mark',9999),('Anna',7582);
+
+
+create table calls (
+id int not null,
+  caller int not null,
+  callee int not null,
+  duration int not null,
+  unique(id)
+);
+--data loading from excel
+select * from calls;
+
+create or replace table caller_details As
+select * from phones 
+inner join calls
+on phones.phone_number = calls.caller;
+
+with call_duration as (
+select caller as phone_number, sum(duration) as duration from calls group by caller
+union all
+select callee as phone_number, sum(duration) as duration from calls group by callee
+)
+SELECT name
+FROM phones p join call_duration cd on cd.phone_number = p.phone_number
+GROUP BY name
+HAVING SUM(duration) >= 10
+ORDER BY name;
+
+drop table phones;
+use telecom;
+create or replace table Phones(
+name varchar(20)not null unique,
+phone_number int not null unique
+);
+
+insert into phones (name,phone_number)
+values ('john',6356),('Addison',4315),('kate',8003),('Ginny',9831);
+Select * from Phones;
+drop table calls;
+
+create table calls (
+id int not null,
+  caller int not null,
+  callee int not null,
+  duration int not null,
+  unique(id)
+);
+
+insert into calls (id,caller,callee,duration)
+values (65,8003,9831,7),(100,9831,8003,3),(145,4315,9831,18);
+
+--Q2
+with call duration as(
+select caller as phone_number, sum(duration) as duration from calls group by caller
+  union all
+  select callee as phone_number, sum(duration)as duration from calls group by callee
+)
+select name 
+from phones p join call_duration cd on cd.phone_number=p.phone_number
+group by name
+having sum(duration)>=10
+order by name;
+
+--Task3
+
+Create table transactions(
+amount int not null,
+date date not null
+);
+
+select * from transactions;
+
+
+select sum(amount)-55 as total_balance from transactions; 
+
+truncate transactions;
+
+select sum(amount) as total_balance from transactions;
+select count(distinct(Month(date)))from transactions;
+select sum(amount)-count(distinct(month(date)))*5 as total_balance from transactions;
